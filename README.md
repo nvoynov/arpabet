@@ -1,10 +1,8 @@
 # Arpabet
 
-This gem provides a method of getting an IPA transcription for [ARPABET](https://en.wikipedia.org/wiki/ARPABET) phonemes.
+This gem provides a method of getting an IPA transcription for [ARPABET](https://en.wikipedia.org/wiki/ARPABET) phonemes. The reason this gem was born - to prepare CMUDict with transcriptions instead of phonemes set, so than only English phonemes supported at the moment.
 
-It splits input phonemes into syllables and when there is a stressed vowel inside it places stresses before the syllable.
-
-Syllabification is based on "A Rule Based Algorithm for Automatic Syllabification of a Word of Bodo".
+It splits input phonemes into syllables and when there is a stressed vowel inside it places stress before the syllable. Syllabification is based on "A Rule Based Algorithm for Automatic Syllabification of a Word of Bodo".
 
 ## Installation
 
