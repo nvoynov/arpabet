@@ -64,18 +64,18 @@ module Arpabet
 
 end
 
-require 'pp'
-require 'minitest/autorun'
-include Arpabet
-
-describe Syllabifier do
-
-  describe '#sylabify' do
-    it 'must split patterns at first :)' do
-      Syllabifier::RULES.each do |pattern, rule|
-        Syllabifier.(pattern).join.must_equal rule
-      end
-    end
-  end
-
-end
+# require 'pp'
+# require 'minitest/autorun'
+# include Arpabet
+#
+# describe Syllabifier do
+#
+#   describe '#sylabify' do
+#     it 'must split patterns at first :)' do
+#       Syllabifier::RULES.each do |pattern, rule|
+#         Syllabifier.(pattern).join.must_equal rule
+#       end
+#     end
+#   end
+#
+# end

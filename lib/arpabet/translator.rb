@@ -10,31 +10,42 @@ module Arpabet
     # @param phonemes [Array<String>] array of 2-letters arpabet phonemes
     # @return [Array<String>] array of Bodo phonemes ('V' or 'C')
     def phonemes_to_bodo(phonemes)
-      phonemes.inject([]){|bodo, phn|
-        bodo << ((VOVELS[phn] || VOVELS[phn[0..-2]]) ? 'V' : CONSONANTS[phn] ? 'C' : '?')
+      phonemes.inject([]){|bodo, phone|
+        ph, _ = phone.match(/([A-Z]{1,2})([\S]*)?/).captures
+        bodo << (VOVELS[ph] ? 'V' : CONSONANTS[ph] ? 'C' : '?')
+        # bodo << ((VOVELS[phn] || VOVELS[phn[0..-2]]) ? 'V' : CONSONANTS[phn] ? 'C' : '?')
       }
     end
-
-    # @param phonemes [Array<String>] array of Bodo phonemes ('V' or 'C')
-    # @return [Array<Array<String>>] array of syllables
-    # def syllabify(phonemes)
-    # end
 
     # @param phonemes [Array<String>] array of 2-letters arpabet phonemes
     # @return [String] IPA presentation of phonemes
     def phonemes_to_ipa(phonemes)
-      syllables = Syllabifier.(phonemes_to_bodo(phonemes))
+      source = Array.new(phonemes)
+      bodo = phonemes_to_bodo(source)
+      syll = Syllabifier.(bodo).join.split('/').inject([]){|out, i| out << i.chars}
+      tran = []
+      syll.each{|s| tran << syllable_to_ipa(source.shift(s.size))}
+      tran.join
+    end
+
+    alias_method :call, :phonemes_to_ipa
+
+
+    def syllable_to_ipa(phonemes)
+      out = []
+      phonemes.each do |phn|
+        ph, ax = phn.match(/([A-Z]{1,2})([\S]*)?/).captures
+        out.unshift(AUXILIARY[ax]) if ax == '1' || ax == '2'
+        out << (phn.eql?('AH0') ? 'ə' : PHONEMES[ph])
+      end
+      out.join
     end
 
     VOVELS = {
       'AA' => 'ɑ',
       'AE' => 'æ',
       'AH' => 'ʌ',
-      # nvoynov added
-      "AH1"=>"ʌ",
-      "AH0"=>"ə",
-      "AX0"=>"ə",
-      # >> end of nvoynov added
+      'AH0'=> 'ə', # manually handled
       'AO' => 'ɔ',
       'AW' => 'aʊ',
       'AX' => 'ə',
@@ -64,7 +75,6 @@ module Arpabet
       'EN' => 'n̩',
       'F' => 'f',
       'G' => 'ɡ',
-      # 'HH or H[4]' => 'h',
       'HH' => 'h',
       'H' => 'h',
       'JH' => 'dʒ',
@@ -72,8 +82,6 @@ module Arpabet
       'L' => 'l',
       'M' => 'm',
       'N' => 'n',
-      # 'NX or NG[4]' => 'ŋ',
-      # 'NX[4]' => 'ɾ̃',
       'NX' => 'ŋ',
       'NG' => 'ŋ',
       'P' => 'p',
@@ -115,10 +123,12 @@ module Arpabet
 
 end
 
-require 'pp'
-include Arpabet
+# require 'pp'
+# include Arpabet
 
-pp Translator.phonemes_to_bodo(%w(AH0 B AE1 K))
-pp Translator.phonemes_to_ipa(%w(AH0 B AE1 K))
-# pp Arpabet.transcription %w(AE1 B AH0 K OW2)
-# pp Arpabet.transcription %w(AE1 B AH0 K AH0 S))
+# ABERCROMBIE  AE2 B ER0 K R AA1 M B IY0
+# ABROGATE  AE1 B R AH0 G EY2 T
+# pp Translator.phonemes_to_ipa(%w(AE1 B AH0 K AH0 S))
+# pp Translator.phonemes_to_ipa(%w(AA0 B AA0 T IY0 EH1 L OW0))
+# pp Translator.phonemes_to_ipa(%w(AE2 B ER0 K R AA1 M B IY0))
+# pp Translator.phonemes_to_ipa(%w(AE1 B R AH0 G EY2 T))
